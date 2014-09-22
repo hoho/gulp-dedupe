@@ -22,5 +22,6 @@ var dedupe = require('gulp-dedupe');
 ```
 
 `dedupe(options)` optionally accepts `options` object. There are two options:
-`error` to emit an error in case of duplicate (`false` by default).
-`same` to emin an error in case duplicates have different contents (`true` by default).
+
++ `error` to emit an error in case of duplicate (`false` by default).
++ `same` to emit an error in case duplicates have different contents (`true` by default).
