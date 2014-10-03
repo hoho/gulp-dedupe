@@ -21,10 +21,11 @@ var dedupe = require('gulp-dedupe');
     .pipe(gulp.dest('./build'));
 ```
 
-`dedupe(options)` optionally accepts `options` object. There are two options:
+`dedupe(options)` optionally accepts `options` object. The following options are
+available:
 
 + `error` to emit an error in case of duplicate (`false` by default).
 + `same` to emit an error in case duplicates have different contents (`true` by
   default).
-+ `diff` to supply duplicates with different contents error (`same: true`) 
++ `diff` to supply duplicates with different contents error from previous option
   with actual diff (`false` by default).
