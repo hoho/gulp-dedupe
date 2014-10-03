@@ -17,7 +17,8 @@ module.exports = function(options) {
 
     options = defaults(options || {}, {
         error: false, // Throw an error in case of duplicate.
-        same: true // Throw an error in case duplicates have different contents.
+        same: true, // Throw an error in case duplicates have different contents.
+        diff: false // Supply duplicates with different content error with actual diff.
     });
 
     function bufferContents(file) {
@@ -31,7 +32,26 @@ module.exports = function(options) {
             if (options.error) {
                 this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '`'));
             } else if (options.same && file.contents.toString() !== f.contents.toString()) {
-                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate file `' + file.path + '` with different contents'));
+                var errorDiff = [];
+
+                if (options.diff) {
+                    require('colors');
+                    var diff = require('diff').diffChars(file.contents.toString(), f.contents.toString());
+
+                    errorDiff.push(':\n');
+
+                    diff.forEach(function(part){
+                        // green for additions, red for deletions
+                        // grey for common parts
+                        var color = part.added ? 'green' :
+                            part.removed ? 'red' : 'grey';
+                        errorDiff.push(part.value[color]);
+                    });
+                }
+
+                errorDiff = errorDiff.join('');
+
+                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate file `' + file.path + '` with different contents' + errorDiff));
             }
             return;
         } else {

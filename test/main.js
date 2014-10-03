@@ -56,6 +56,17 @@ describe('gulp-dedupe', function() {
         );
 
         testDedupe(
+            {diff: true},
+            [
+                'file1.txt', 'Contents1',
+                'file1.txt', 'Contents2'
+            ],
+            [
+                'file1.txt', 'Contents1', 'Duplicate file `file1.txt` with different contents:\n'
+            ]
+        );
+
+        testDedupe(
             {same: false},
             [
                 'file1.txt', 'Contents1',
@@ -93,7 +104,9 @@ describe('gulp-dedupe', function() {
                 });
 
                 stream.on('error', function(err) {
-                    err.message.should.equal(results.shift());
+                    var expected = results.shift();
+                    var msg = (err.message || '').substring(0, expected.length);
+                    msg.should.equal(expected);
                 });
 
                 while (files.length) {
