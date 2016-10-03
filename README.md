@@ -1,6 +1,6 @@
 # gulp-dedupe [![Build Status](https://travis-ci.org/hoho/gulp-dedupe.svg?branch=master)](https://travis-ci.org/hoho/gulp-dedupe)
 
-Check for duplicates in the stream and filter them or throw an error.
+This plugin is checking for duplicate files (based on their name) in the stream and filter them or throw an error.
 
 
 Install:
