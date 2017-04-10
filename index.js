@@ -10,10 +10,12 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var path = require('path');
 var defaults = require('lodash.defaults');
-
+var hasher = require('hash-files');
 
 module.exports = function(options) {
-    var filesMap = {};
+
+    var filesMap = {},
+        filesHashes = {};
 
     options = defaults(options || {}, {
         error: false, // Throw an error in case of duplicate.
@@ -26,9 +28,15 @@ module.exports = function(options) {
         if (file.isStream()) { return this.emit('error', new PluginError('gulp-dedupe', 'Streaming not supported')); }
 
         var fullpath = path.resolve(file.path),
+            hash = hashFiles.sync(fullpath),
+            h,
             f;
 
-        if ((f = filesMap[fullpath])) {
+        if ((f = filesMap[fullpath]) || (h = filesHashes[hash])) {
+
+            // fall back to hash lookup
+            if (!f && h) f = h;
+
             if (options.error) {
                 this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '`'));
             } else if (options.same && file.contents.toString() !== f.contents.toString()) {
@@ -56,7 +64,9 @@ module.exports = function(options) {
             return;
         } else {
             filesMap[fullpath] = file;
+            filesHashes[hash] = file;
         }
+
         this.emit('data', file);
     }
 
