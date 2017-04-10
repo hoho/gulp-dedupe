@@ -24,21 +24,29 @@ module.exports = function(options) {
     });
 
     function bufferContents(file) {
+
         if (file.isNull()) { return; }
         if (file.isStream()) { return this.emit('error', new PluginError('gulp-dedupe', 'Streaming not supported')); }
 
         var fullpath = path.resolve(file.path),
-            hash = hashFiles.sync(fullpath),
+            hash = hasher.sync({files: [fullpath]}),
+            dupeType = null,
             h,
             f;
 
         if ((f = filesMap[fullpath]) || (h = filesHashes[hash])) {
 
             // fall back to hash lookup
-            if (!f && h) f = h;
+            if (!f && h) {
+                dupeType = 'hash';
+                f = h;
+            }
+            else {
+                dupeType = 'path';
+            }
 
             if (options.error) {
-                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '`'));
+                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate files (' + dupeType + ') ' + file.path + ' and ' + f.path));
             } else if (options.same && file.contents.toString() !== f.contents.toString()) {
                 var errorDiff = [];
 
