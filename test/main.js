@@ -99,17 +99,12 @@ describe('gulp-dedupe', function() {
                     file.contents.toString().substring(0, expectedHead.length).should.equal(expectedHead);
 
                     if (results && !results.length) {
-                        console.log('all g');
                         results = null;
                         done();
-                    }
-                    else {
-                        console.log('wtf', results);
                     }
                 });
 
                 stream.on('error', function(err) {
-                    console.log(err);
                     var expected = results.shift();
                     var msg = (err.message || '').substring(0, expected.length);
                     msg.should.equal(expected);
