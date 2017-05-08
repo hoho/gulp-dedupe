@@ -46,7 +46,7 @@ module.exports = function(options) {
             }
 
             if (options.error) {
-                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '` - Duplicate files (' + dupeType + ') ' + file.path + ' and ' + f.path));
+                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '` has same ' + dupeType + ' as `' + f.path + '`'));
             }
 
             else if (options.same && file.contents.toString() !== f.contents.toString()) {
