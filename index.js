@@ -46,8 +46,10 @@ module.exports = function(options) {
             }
 
             if (options.error) {
-                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate files (' + dupeType + ') ' + file.path + ' and ' + f.path));
-            } else if (options.same && file.contents.toString() !== f.contents.toString()) {
+                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '` - Duplicate files (' + dupeType + ') ' + file.path + ' and ' + f.path));
+            }
+
+            else if (options.same && file.contents.toString() !== f.contents.toString()) {
                 var errorDiff = [];
 
                 if (options.diff) {
@@ -69,8 +71,11 @@ module.exports = function(options) {
 
                 this.emit('error', new PluginError('gulp-dedupe', 'Duplicate file `' + file.path + '` with different contents' + errorDiff));
             }
+
             return;
-        } else {
+
+        }
+        else {
             filesMap[fullpath] = file;
             filesHashes[hash] = file;
         }
