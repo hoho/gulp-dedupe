@@ -10,10 +10,12 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var path = require('path');
 var defaults = require('lodash.defaults');
-
+var md5 = require('md5');
 
 module.exports = function(options) {
-    var filesMap = {};
+
+    var filesMap = {},
+        filesHashes = {};
 
     options = defaults(options || {}, {
         error: false, // Throw an error in case of duplicate.
@@ -22,16 +24,32 @@ module.exports = function(options) {
     });
 
     function bufferContents(file) {
+
         if (file.isNull()) { return; }
         if (file.isStream()) { return this.emit('error', new PluginError('gulp-dedupe', 'Streaming not supported')); }
 
         var fullpath = path.resolve(file.path),
+            hash = md5(file._contents),
+            dupeType = null,
+            h,
             f;
 
-        if ((f = filesMap[fullpath])) {
+        if ((f = filesMap[fullpath]) || (h = filesHashes[hash])) {
+
+            // fall back to hash lookup
+            if (!f && h) {
+                dupeType = 'hash';
+                f = h;
+            }
+            else {
+                dupeType = 'path';
+            }
+
             if (options.error) {
-                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '`'));
-            } else if (options.same && file.contents.toString() !== f.contents.toString()) {
+                this.emit('error', new PluginError('gulp-dedupe', 'Duplicate `' + file.path + '` has same ' + dupeType + ' as `' + f.path + '`'));
+            }
+
+            else if (options.same && file.contents.toString() !== f.contents.toString()) {
                 var errorDiff = [];
 
                 if (options.diff) {
@@ -53,10 +71,15 @@ module.exports = function(options) {
 
                 this.emit('error', new PluginError('gulp-dedupe', 'Duplicate file `' + file.path + '` with different contents' + errorDiff));
             }
+
             return;
-        } else {
-            filesMap[fullpath] = file;
+
         }
+        else {
+            filesMap[fullpath] = file;
+            filesHashes[hash] = file;
+        }
+
         this.emit('data', file);
     }
 

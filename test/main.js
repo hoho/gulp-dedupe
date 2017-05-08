@@ -28,7 +28,6 @@ describe('gulp-dedupe', function() {
                 'file2.txt', 'Contents2',
                 'file3.txt', 'Contents3',
                 'file4.txt', 'Contents4',
-                'test/file1.txt', 'Contents1'
             ]
         );
 
@@ -82,8 +81,10 @@ describe('gulp-dedupe', function() {
 
             it('should dedupe files', function(done) {
                 stream.on('data', function (file) {
+
                     var expectedFilename = results.shift(),
                         expectedHead = results.shift();
+
                     should.exist(file);
                     should.exist(file.relative);
                     should.exist(file.contents);
