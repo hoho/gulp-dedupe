@@ -10,7 +10,7 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var path = require('path');
 var defaults = require('lodash.defaults');
-var hasher = require('hash-files');
+var md5 = require('md5');
 
 module.exports = function(options) {
 
@@ -29,7 +29,7 @@ module.exports = function(options) {
         if (file.isStream()) { return this.emit('error', new PluginError('gulp-dedupe', 'Streaming not supported')); }
 
         var fullpath = path.resolve(file.path),
-            hash = hasher.sync({files: [fullpath]}),
+            hash = md5(file._contents),
             dupeType = null,
             h,
             f;
