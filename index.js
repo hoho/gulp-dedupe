@@ -6,8 +6,7 @@
 'use strict';
 
 var through = require('through');
-var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
+var PluginError = require('plugin-error');
 var path = require('path');
 var defaults = require('lodash.defaults');
 
