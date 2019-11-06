@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "colors": "~1.0.2",
-        "diff": "~1.0.8",
+        "diff": "~4.0.1",
         "lodash.defaults": "~2.4.1",
         "plugin-error": "^1.0.1",
         "through": "~2.3.6"
